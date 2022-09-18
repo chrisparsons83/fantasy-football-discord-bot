@@ -105,12 +105,6 @@ function purgeRequireCache() {
   }
 }
 
-declare module "discord.js" {
-  interface Client {
-    commands: any;
-  }
-}
-
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
