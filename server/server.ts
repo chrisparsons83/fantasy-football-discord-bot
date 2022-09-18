@@ -1,8 +1,9 @@
-import path from "path";
+import path from "node:path";
 import express from "express";
 import compression from "compression";
 import morgan from "morgan";
 import { createRequestHandler } from "@remix-run/express";
+import { Client, GatewayIntentBits } from "discord.js";
 
 const app = express();
 
@@ -103,3 +104,20 @@ function purgeRequireCache() {
     }
   }
 }
+
+declare module "discord.js" {
+  interface Client {
+    commands: any;
+  }
+}
+
+// Create a new client instance
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+
+// When the client is ready, run this code (only once)
+client.once("ready", () => {
+  console.log("Ready!");
+});
+
+// Login to Discord with your client's token
+client.login(process.env.DISCORD_BOT_TOKEN);

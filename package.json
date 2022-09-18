@@ -6,12 +6,12 @@
     "build": "run-s build:*",
     "build:css": "npm run generate:css -- --minify",
     "build:remix": "remix build",
-    "build:server": "esbuild --platform=node --format=cjs ./server/index.ts --outdir=build --bundle",
+    "build:server": "esbuild --platform=node --format=cjs ./server/server.ts --outdir=build --bundle",
     "dev": "run-p dev:*",
     "dev:build": "cross-env NODE_ENV=development npm run build:server -- --watch",
     "dev:css": "cross-env NODE_ENV=development npm run generate:css -- --watch",
     "dev:remix": "cross-env NODE_ENV=development remix watch",
-    "dev:server": "cross-env NODE_ENV=development node --inspect --require ./node_modules/dotenv/config --require ./mocks ./build/index.js",
+    "dev:server": "cross-env NODE_ENV=development node --inspect --require ./node_modules/dotenv/config --require ./mocks ./build/server.js",
     "docker": "docker-compose up -d",
     "format": "prettier --write .",
     "generate:css": "tailwindcss -o ./app/styles/tailwind.css",
@@ -34,6 +34,7 @@
     "/postgres-data"
   ],
   "dependencies": {
+    "@discordjs/rest": "^1.1.0",
     "@prisma/client": "^4.2.1",
     "@remix-run/express": "^1.7.1",
     "@remix-run/node": "^1.7.1",
