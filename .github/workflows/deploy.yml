@@ -93,6 +93,9 @@ jobs:
       - name: 🏄 Copy test env vars
         run: cp .env.example .env
 
+      - name: Remove dummy Discord Bot Token Id
+        run: sed '/DISCORD_BOT_TOKEN/d' .env
+
       - name: ⎔ Setup node
         uses: actions/setup-node@v3
         with:
@@ -122,6 +125,7 @@ jobs:
           wait-on: "http://localhost:8811"
         env:
           PORT: "8811"
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
 
   build:
     name: 🐳 Build
