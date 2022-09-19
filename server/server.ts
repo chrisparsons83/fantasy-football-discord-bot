@@ -4,6 +4,7 @@ import compression from "compression";
 import morgan from "morgan";
 import { createRequestHandler } from "@remix-run/express";
 import { Client, GatewayIntentBits } from "discord.js";
+import Bree from "bree";
 
 const app = express();
 
@@ -105,6 +106,8 @@ function purgeRequireCache() {
   }
 }
 
+// Discord Bot Code
+
 // Create a new client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -115,3 +118,14 @@ client.once("ready", () => {
 
 // Login to Discord with your client's token
 client.login(process.env.DISCORD_BOT_TOKEN);
+
+// Bree Job Runner Code
+
+const bree = new Bree({
+  root: path.join(__dirname, "jobs"),
+  defaultExtension: process.env.TS_NODE ? "ts" : "js",
+  jobs: [{ name: "loadNewNews", interval: "1y" }],
+});
+(async () => {
+  await bree.start();
+})();
