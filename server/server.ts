@@ -122,12 +122,15 @@ client.once("ready", () => {
       },
     });
 
+    console.log({ newNews });
+
     // Get all channels to send to
     const channels = client.guilds.cache.map((guild) =>
       guild.channels.cache.find((channel: any) => channel.name === "ff-news")
     ) as TextChannel[];
 
     if (newNews.length > 0) {
+      console.log(`New articles to post, count ${newNews.length}`);
       const newsEmbeds: EmbedBuilder[] = [];
 
       for (const news of newNews) {
