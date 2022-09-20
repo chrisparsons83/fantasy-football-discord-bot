@@ -124,7 +124,7 @@ client.login(process.env.DISCORD_BOT_TOKEN);
 const bree = new Bree({
   root: path.join(__dirname, "jobs"),
   defaultExtension: process.env.TS_NODE ? "ts" : "js",
-  jobs: [{ name: "loadNewNews", interval: "1y" }],
+  jobs: [{ name: "loadNewNews", interval: "1m" }],
 });
 (async () => {
   await bree.start();

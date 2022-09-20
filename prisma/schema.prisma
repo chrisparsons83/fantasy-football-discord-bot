@@ -45,7 +45,7 @@ model NewsPost {
   title String
   description String
   author String
-  newsIdentifier String
+  newsIdentifier String @unique
   url String
 
   isPublished Boolean @default(false)
