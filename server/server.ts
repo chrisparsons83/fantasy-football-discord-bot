@@ -115,14 +115,12 @@ function purgeRequireCache() {
 client.once("ready", () => {
   console.log("Ready!");
 
-  setTimeout(async () => {
+  setInterval(async () => {
     const newNews = await prisma.newsPost.findMany({
       where: {
         isPublished: false,
       },
     });
-
-    console.log({ newNews });
 
     // Get all channels to send to
     const channels = client.guilds.cache.map((guild) =>
@@ -130,7 +128,6 @@ client.once("ready", () => {
     ) as TextChannel[];
 
     if (newNews.length > 0) {
-      console.log(`New articles to post, count ${newNews.length}`);
       const newsEmbeds: EmbedBuilder[] = [];
 
       for (const news of newNews) {
