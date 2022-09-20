@@ -3,8 +3,11 @@ import express from "express";
 import compression from "compression";
 import morgan from "morgan";
 import { createRequestHandler } from "@remix-run/express";
-import { Client, GatewayIntentBits } from "discord.js";
+import { client } from "./lib/discordClient";
 import Bree from "bree";
+import { prisma } from "~/db.server";
+import type { TextChannel } from "discord.js";
+import { EmbedBuilder } from "discord.js";
 
 const app = express();
 
@@ -108,12 +111,53 @@ function purgeRequireCache() {
 
 // Discord Bot Code
 
-// Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-
 // When the client is ready, run this code (only once)
 client.once("ready", () => {
   console.log("Ready!");
+
+  setTimeout(async () => {
+    const newNews = await prisma.newsPost.findMany({
+      where: {
+        isPublished: false,
+      },
+    });
+
+    // Get all channels to send to
+    const channels = client.guilds.cache.map((guild) =>
+      guild.channels.cache.find((channel: any) => channel.name === "ff-news")
+    ) as TextChannel[];
+
+    if (newNews.length > 0) {
+      const newsEmbeds: EmbedBuilder[] = [];
+
+      for (const news of newNews) {
+        const newsEmbed = new EmbedBuilder()
+          .setTitle(news.author)
+          .setURL(news.url)
+          .setDescription(news.description)
+          .setColor(0x1da1f2);
+        newsEmbeds.push(newsEmbed);
+      }
+
+      for (const channel of channels) {
+        if (channel) {
+          channel.send({ embeds: newsEmbeds });
+        }
+      }
+
+      const newNewsIds = newNews.map((news) => news.id);
+      await prisma.newsPost.updateMany({
+        where: {
+          id: {
+            in: newNewsIds,
+          },
+        },
+        data: {
+          isPublished: true,
+        },
+      });
+    }
+  }, 30000);
 });
 
 // Login to Discord with your client's token
