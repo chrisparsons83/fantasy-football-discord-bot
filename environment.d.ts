@@ -6,6 +6,7 @@ declare global {
       SESSION_SECRET: string;
       CLIENT_ID: string;
       GUILD_ID: string;
+      SLEEPER_AUTH: string | undefined;
     }
   }
 }

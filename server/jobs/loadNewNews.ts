@@ -47,7 +47,7 @@ type SleeperStory = {
 };
 
 (async () => {
-  if (parentPort) {
+  if (parentPort && process.env.SLEEPER_AUTH) {
     const graphQLClient = new GraphQLClient(ENDPOINT, {
       headers: {
         authorization: `${process.env.SLEEPER_AUTH}`,
