@@ -116,11 +116,13 @@ client.once("ready", () => {
   console.log("Ready!");
 
   setInterval(async () => {
-    const newNews = await prisma.newsPost.findMany({
-      where: {
-        isPublished: false,
-      },
-    });
+    const newNews = (
+      await prisma.newsPost.findMany({
+        where: {
+          isPublished: false,
+        },
+      })
+    ).slice(0, 10);
 
     // Get all channels to send to
     const channels = client.guilds.cache.map((guild) =>
@@ -131,11 +133,15 @@ client.once("ready", () => {
       const newsEmbeds: EmbedBuilder[] = [];
 
       for (const news of newNews) {
-        const newsEmbed = new EmbedBuilder()
+        let newsEmbed = new EmbedBuilder()
           .setTitle(news.author)
-          .setURL(news.url)
           .setDescription(news.description)
           .setColor(0x1da1f2);
+
+        if (news.url !== "") {
+          newsEmbed = newsEmbed.setURL(news.url);
+        }
+
         newsEmbeds.push(newsEmbed);
       }
 
