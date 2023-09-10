@@ -3,7 +3,7 @@ import process from "node:process";
 import { prisma } from "../lib/db";
 import { GraphQLClient, gql } from "graphql-request";
 import type { NewsPost } from "@prisma/client";
-import z from "zod";
+import z, { object } from "zod";
 
 const ENDPOINT = `https://sleeper.app/graphql`;
 const GET_NEWS = gql`
@@ -75,7 +75,6 @@ const sleeperNewsData = z.object({
     const promises: Promise<NewsPost>[] = [];
     for (const news of newsStories.topics) {
       if (news.channel_tags.includes("content")) continue;
-      if (Object.keys(news.title_map).length === 0) continue;
 
       const tag = news.channel_tags[0];
 
@@ -92,7 +91,12 @@ const sleeperNewsData = z.object({
       const recordKey = Object.keys(news.title_map)[0];
 
       // TODO - type this better, use a guard
-      if (news.title_map[recordKey].type === "url") {
+
+      if (Object.keys(news.title_map).length === 0) {
+        objectToSend.description = news.title;
+        objectToSend.author =
+          objectToSend.description.match(/(@\S+\b)/gi)?.[0] || "SleeperNFL";
+      } else if (news.title_map[recordKey].type === "url") {
         objectToSend.description =
           news.title_map[recordKey].data?.info?.description!;
         objectToSend.url = recordKey;
