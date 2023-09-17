@@ -3,7 +3,7 @@ import process from "node:process";
 import { prisma } from "../lib/db";
 import { GraphQLClient, gql } from "graphql-request";
 import type { NewsPost } from "@prisma/client";
-import z, { object } from "zod";
+import z from "zod";
 
 const ENDPOINT = `https://sleeper.app/graphql`;
 const GET_NEWS = gql`
@@ -75,6 +75,7 @@ const sleeperNewsData = z.object({
     const promises: Promise<NewsPost>[] = [];
     for (const news of newsStories.topics) {
       if (news.channel_tags.includes("content")) continue;
+      if (news.channel_tags.includes("sleeper")) continue;
 
       const tag = news.channel_tags[0];
 
