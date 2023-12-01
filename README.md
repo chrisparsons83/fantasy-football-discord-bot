@@ -1,6 +1,6 @@
 # Fantasy Football Discord Bot
 
-This stack is built upon [Remix](https://remix.run/), so if you have questions, the [Remix documentation](https://remix.run/docs/en/v1) is your best bet.
+This stack is built upon [Remix](https://remix.run/), so if you have questions, the [Remix documentation](https://remix.run/docs/en/v1) is your best bet. This is going to be archived soon though so don't worry too much.
 
 ## What's in the stack
 
