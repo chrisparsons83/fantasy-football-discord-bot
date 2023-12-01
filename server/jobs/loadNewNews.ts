@@ -36,6 +36,7 @@ const GET_NEWS = gql`
 
 const sleeperTopic = z.object({
   channel_tags: z.array(z.string()),
+  player_tags: z.array(z.string()),
   title: z.string(),
   title_map: z.record(
     z.object({
@@ -63,7 +64,11 @@ const sleeperNewsData = z.object({
 });
 
 (async () => {
-  if (parentPort && process.env.SLEEPER_AUTH) {
+  if (
+    parentPort &&
+    process.env.SLEEPER_AUTH &&
+    process.env.PROCESS_NEWS === "on"
+  ) {
     const graphQLClient = new GraphQLClient(ENDPOINT, {
       headers: {
         authorization: `${process.env.SLEEPER_AUTH}`,
@@ -76,6 +81,7 @@ const sleeperNewsData = z.object({
     for (const news of newsStories.topics) {
       if (news.channel_tags.includes("content")) continue;
       if (news.channel_tags.includes("sleeper")) continue;
+      if (news.player_tags.length === 0) continue;
 
       const tag = news.channel_tags[0];
 

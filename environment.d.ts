@@ -7,6 +7,7 @@ declare global {
       CLIENT_ID: string;
       GUILD_ID: string;
       SLEEPER_AUTH: string | undefined;
+      PROCESS_NEWS: "off" | "on";
     }
   }
 }

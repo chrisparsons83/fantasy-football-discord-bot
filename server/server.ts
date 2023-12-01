@@ -115,55 +115,57 @@ function purgeRequireCache() {
 client.once("ready", () => {
   console.log("Ready!");
 
-  setInterval(async () => {
-    const newNews = (
-      await prisma.newsPost.findMany({
-        where: {
-          isPublished: false,
-        },
-      })
-    ).slice(0, 10);
-
-    // Get all channels to send to
-    const channels = client.guilds.cache.map((guild) =>
-      guild.channels.cache.find((channel: any) => channel.name === "ff-news")
-    ) as TextChannel[];
-
-    if (newNews.length > 0) {
-      const newsEmbeds: EmbedBuilder[] = [];
-
-      for (const news of newNews) {
-        let newsEmbed = new EmbedBuilder()
-          .setTitle(news.author)
-          .setDescription(news.description)
-          .setColor(0x1da1f2);
-
-        if (news.url !== "") {
-          newsEmbed = newsEmbed.setURL(news.url);
-        }
-
-        newsEmbeds.push(newsEmbed);
-      }
-
-      for (const channel of channels) {
-        if (channel) {
-          channel.send({ embeds: newsEmbeds });
-        }
-      }
-
-      const newNewsIds = newNews.map((news) => news.id);
-      await prisma.newsPost.updateMany({
-        where: {
-          id: {
-            in: newNewsIds,
+  if (process.env.PROCESS_NEWS === "on") {
+    setInterval(async () => {
+      const newNews = (
+        await prisma.newsPost.findMany({
+          where: {
+            isPublished: false,
           },
-        },
-        data: {
-          isPublished: true,
-        },
-      });
-    }
-  }, 30000);
+        })
+      ).slice(0, 10);
+
+      // Get all channels to send to
+      const channels = client.guilds.cache.map((guild) =>
+        guild.channels.cache.find((channel: any) => channel.name === "ff-news")
+      ) as TextChannel[];
+
+      if (newNews.length > 0) {
+        const newsEmbeds: EmbedBuilder[] = [];
+
+        for (const news of newNews) {
+          let newsEmbed = new EmbedBuilder()
+            .setTitle(news.author)
+            .setDescription(news.description)
+            .setColor(0x1da1f2);
+
+          if (news.url !== "") {
+            newsEmbed = newsEmbed.setURL(news.url);
+          }
+
+          newsEmbeds.push(newsEmbed);
+        }
+
+        for (const channel of channels) {
+          if (channel) {
+            channel.send({ embeds: newsEmbeds });
+          }
+        }
+
+        const newNewsIds = newNews.map((news) => news.id);
+        await prisma.newsPost.updateMany({
+          where: {
+            id: {
+              in: newNewsIds,
+            },
+          },
+          data: {
+            isPublished: true,
+          },
+        });
+      }
+    }, 30000);
+  }
 });
 
 // Login to Discord with your client's token
