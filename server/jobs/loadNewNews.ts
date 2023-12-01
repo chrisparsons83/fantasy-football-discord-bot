@@ -36,7 +36,7 @@ const GET_NEWS = gql`
 
 const sleeperTopic = z.object({
   channel_tags: z.array(z.string()),
-  player_tags: z.array(z.string()),
+  player_tags: z.nullable(z.array(z.string())),
   title: z.string(),
   title_map: z.record(
     z.object({
@@ -81,6 +81,7 @@ const sleeperNewsData = z.object({
     for (const news of newsStories.topics) {
       if (news.channel_tags.includes("content")) continue;
       if (news.channel_tags.includes("sleeper")) continue;
+      if (!news.player_tags) continue;
       if (news.player_tags.length === 0) continue;
 
       const tag = news.channel_tags[0];
